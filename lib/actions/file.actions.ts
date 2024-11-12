@@ -201,6 +201,34 @@ export const deleteFile = async ({
   }
 };
 
+export const deleteAllFiles = async ({
+  fileIds,
+  path,
+}: {
+  fileIds: string[];
+  path: string;
+}) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) throw new Error("User not found");
+
+  const { databases, storage } = await createAdminClient();
+  try {
+    const deletedFiles = [];
+    for (const id of fileIds) {
+      const deletedFile = await databases.deleteDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.filesCollectionId,
+        id,
+      );
+      deletedFiles.push(deletedFile);
+    }
+    revalidatePath(path);
+    return parseStringify(deletedFiles);
+  } catch (error) {
+    handleError(error, "Failed to delete all files");
+  }
+};
+
 export async function getTotalSpaceUsed() {
   try {
     const { databases } = await createSessionClient();

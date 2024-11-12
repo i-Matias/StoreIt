@@ -1,10 +1,11 @@
 import Card from "@/components/Card";
 import Sort from "@/components/Sort";
-import { getFiles } from "@/lib/actions/file.actions";
+import { Button } from "@/components/ui/button";
+import { deleteAllFiles, getFiles } from "@/lib/actions/file.actions";
 import { convertFileSize, getFileTypesParams } from "@/lib/utils";
 import { FileType, SearchParamProps } from "@/types";
 import { Models } from "node-appwrite";
-import React, { useMemo } from "react";
+import { useState } from "react";
 
 const Page = async ({ searchParams, params }: SearchParamProps) => {
   const type = ((await params)?.type as string) || "";
@@ -24,9 +25,32 @@ const Page = async ({ searchParams, params }: SearchParamProps) => {
         <h1 className="h1 capitalize">{type}</h1>
 
         <div className="total-size-section">
-          <p className="body-1">
-            Total: <span className="h5">{convertFileSize(total)}</span>
-          </p>
+          <div className="flex-center gap-4">
+            <p className="body-1">
+              Total: <span className="h5">{convertFileSize(total)}</span>
+            </p>
+            <form
+              action={async () => {
+                "use server";
+                const fileIds = files.documents.map(
+                  (file: Models.Document) => file.$id,
+                );
+
+                const deletedFiles = await deleteAllFiles({
+                  fileIds,
+                  path: type,
+                });
+                console.log(deletedFiles);
+              }}
+            >
+              <Button
+                className="primary-btn"
+                disabled={files.documents.length === 0}
+              >
+                Delete all
+              </Button>
+            </form>
+          </div>
 
           <div className="sort-container">
             <p className="body-1 hidden text-light-200 sm:block">Sort by:</p>
