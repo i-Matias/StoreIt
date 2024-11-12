@@ -40,7 +40,6 @@ const Page = async ({ searchParams, params }: SearchParamProps) => {
                   fileIds,
                   path: type,
                 });
-                console.log(deletedFiles);
               }}
             >
               <Button

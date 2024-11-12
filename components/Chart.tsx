@@ -31,7 +31,6 @@ const chartConfig: ChartConfig = {
 export const Chart = ({ used = 0 }: { used: number }) => {
   const percentage = calculatePercentage(used) || 0;
   const chartData = [{ storage: "used", usage: used, fill: "white" }];
-  console.log(percentage);
 
   return (
     <Card className="chart">
